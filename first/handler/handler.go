@@ -9,8 +9,8 @@ import (
 )
 
 type User struct {
-	name     string
-	password string
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,8 +22,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("The user request body: ", user)
 
 	// For the first time of verification we are checking whether the credentials are matched or not
-	if user.name == "Emon" && user.password == "123456" {
-		tokenString, err := jwt.CreateToken(user.name) // Trying to generate a JWT Token
+	if user.Name == "Emon" && user.Password == "123456" {
+		tokenString, err := jwt.CreateToken(user.Name) // Trying to generate a JWT Token
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprint(w, "Failed to Generate Token")
@@ -39,7 +39,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	tokenString := w.Header().Get("Authorization") // Authorization header will contain the token
+	tokenString := r.Header.Get("Authorization") // Authorization header will contain the token
+
+	fmt.Println("Token String: ", tokenString)
 
 	if tokenString == "" {
 		w.WriteHeader(http.StatusUnauthorized)
